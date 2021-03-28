@@ -1,8 +1,6 @@
 from datetime import datetime
-
 import boto3
 import botocore
-import time
 
 
 # open a list of tags from an s3 bucket and copy it to local
