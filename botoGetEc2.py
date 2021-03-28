@@ -30,10 +30,10 @@ for instance in ec2.instances.all():
         print("*****************")
         print(tag['Key'], " -", tag['Value'])
         if tag['Key'] in contents or tag['Value'] in contents:
-            print("instance running -", instance)
+            print("instance remaining -", instance)
         else:
             print("instance terminated - ", instance)
-            # instance.terminate()
+            instance.terminate()
 
 
 # run on all EC2 instances and create AMI from the first one that is running
