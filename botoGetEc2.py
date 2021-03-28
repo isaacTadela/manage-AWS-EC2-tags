@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import boto3
 import botocore
 import time
@@ -33,10 +35,9 @@ for instance in ec2.instances.all():
             print("instance running -", instance)
         else:
             print("instance terminated - ", instance)
-            instance.terminate()
+            # instance.terminate()
 
 
-#TODO: finsh this
 # run on all EC2 instances and create AMI from the first one that is running
 ec2 = boto3.resource('ec2')
 
@@ -44,23 +45,16 @@ try:
     for instance in ec2.instances.all():
         if(instance.state['Name'] == 'running'):
             running_instance = instance
+            print(instance)
             break
 
-    image = running_instance.create_image(InstanceId=running_instance.id, NoReboot=True, Name="abc22")
-
-
-    # instance_ami = running_instance
-    # print("id for ami creation", instance_ami.id)
-    # running_instance.create_image(InstanceId=running_instance.id, NoReboot=True, Name="abc12")
-    # print("sleep for 20 sec")
-    # time.sleep(20)
-    # print("Created image from instance", running_instance.id)
-    # # images = ec2.describe_images(Owners=['self'])
-    # images = ec2.images.filter(Owners=['self'])
-    # print("My images:")
-    # for ami in images:
-    #     print(ami)
-    # print("Image Created ", running_instance.id)
+    create_ami = running_instance.create_image(InstanceId=running_instance.id,
+                                               BlockDeviceMappings=[{'DeviceName': '/dev/sda1',
+                                                                    'Ebs': {'DeleteOnTermination': True}}, ],
+                                               NoReboot=True, Name="abc255")
+    create_ami.wait_until_exists(Filters=[{'Name': 'state', 'Values': ['available']}])
+    print('success: ami now available')
+    print(datetime.now())
 except Exception as e:
     print("You have no instances")
     print(e)
